@@ -4,7 +4,7 @@ from keras.models import load_model
 from keras.optimizers import Adam 
 import numpy as np
 import tensorflow as tf
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 from collections import deque
 from pathlib import Path
@@ -14,15 +14,19 @@ import math
 import time
 import csv
 
-from plotting import plot_episode_stats
-from plotting import Stats
-from env import env
+from runAgent import env
 from getMaxComboScore import getMaxComboScore
+from getMatrix import getMatrix
+from takeAction import generate_random
+from random import randint
+from createActionSpace import createActionSpace
+
 
 class DQNAgent:
 	def __init__(self, env):
-		self.state_size = 2 # health of AI & player
-		self.action_size = 27 # 3x3 matrix initially
+		self.state_size = 4 # health of AI & player, agent cumulative wins, player cumulative wins
+		self.action_size = 256 # 4^4 combinations
+		self.combo_dim = 4 # ex: ABCD
 		self.batch_size = 2
 		self.num_hidden_layers = 2		
 		self.num_neurons = 5
@@ -73,8 +77,10 @@ class DQNAgent:
 
 	def _act(self, state):
 		if np.random.rand() <= self.epsilon:
-			return random.choice(env.action_space)
+			return generate_random(self.combo_dim)
 		act_vals = self.model.predict(state)
+		# print(np.argmax(act_vals[0]), type(np.argmax(act_vals[0])))
+		print(act_vals)
 		return np.argmax(act_vals[0])
 
 	def _remember(self, state, action, reward, next_state, done):
@@ -89,9 +95,10 @@ class DQNAgent:
 		self.model.save(name)
 
 if __name__ == "__main__":
-	max_health = 100 # initial health
-	
-	env = env(agent_health, player_health, max_combo_score) # create an instance of the e-leap-ments AI
+	max_health = 10 # initial health
+	EPISODES = 20 # number of times we change matrix
+
+	env = env(max_health, None, None, None) # create an instance of the e-leap-ments AI
 	agent = DQNAgent(env)
 	done = False
 
@@ -99,18 +106,31 @@ if __name__ == "__main__":
 	episode_rewards = []
 
 	for e in range(EPISODES):
-		state = env.reset(e) # state is [agent_health, player_health]
+		env.aciton_space = createActionSpace(agent.state_size)
+		print('as: ', env.aciton_space)
+		reset = True
+		state = env.reset(e) # state is [self.agent_health, self.player_health, self.agent_wins, self.player_wins]
 		state = np.reshape(state, [1, agent.state_size]) # reshapes state dim
 		env.state = state
-		env.max_combo_score = getMaxComboScore() # get max score at every level
+		env.matrix = getMatrix()
+		env.max_combo_score = getMaxComboScore(env.matrix) # get max score of new matrix board
 		t_start = time.time()
 		reward_f = 0
-		for time_t in range(500):
-			actions_taken = []
-			states_taken = []
+		player_health = 100
+		for time_t in range(20):
 
 			action = agent._act(env.state)
-			next_state, reward, done = env.step(action) 
+
+
+			"""
+			to be implemented: get player health
+			"""
+			player_score = random.randint(1,2)
+			print('before step ', env.aciton_space)
+
+			next_state, reward, done = env.step(action, player_score, player_health, reset) 
+			reset = False
+
 			reward_f += reward
 
 			next_state = np.reshape(next_state, [1, agent.state_size])
@@ -121,14 +141,14 @@ if __name__ == "__main__":
 			env.state = state # keep env updated 
 
 			if done:
-				print("episode: {}/{}, trial: {}, reward: {}"
-					  .format(e+1, EPISODES, time_t+1, reward+1))
+				print("episode: {}/{}, trials in this ep: {}, agent wins: {}"
+					  .format(e+1, EPISODES, time_t+1, env.agent_wins+1))
 				break
 		t_end = time.time()
 		length = t_end - t_start
 
-		if time_t > 4:
-			print("Failed to complete in trial {}".format(time_t))
+		# if time_t > 4:
+		# 	print("Failed to complete in trial {}".format(time_t))
 		if e > 5:
 			agent._replay()
 

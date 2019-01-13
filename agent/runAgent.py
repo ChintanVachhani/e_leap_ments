@@ -1,5 +1,4 @@
 from getMaxComboScore import getMaxComboScore
-from getReward import getReward
 from getScore import getScore
 
 
@@ -27,46 +26,61 @@ when their performed action is the max combo possible
 """
 
 class env():
-	def __init__(self, max_health, max_combo_score):
-		self.action_space = [x for x in range(0, len(self.action_space_mappings))]
+	def __init__(self, max_health, max_combo_score, matrix, action_space):
 		self.state = None 
 		self.reward = None
-		self.episode = None	
+		self.episode = 0	
 		self.fate = None # win: 1 loss: 0
-		self.max_health = max_health
-		self.agent_health = max_health
-		self.player_health = max_health
+		self.matrix = matrix 
+		self.action_space = action_space
+		self.agent_wins, self.player_wins = 0, 0
+		self.max_health, self.agent_health, self.player_health = max_health, max_health, max_health
 		self.max_combo_score = max_combo_score
 		
 
-	def step(self, action, player_health, reset): # returns next state, reward, done
+	def step(self, action, player_score, player_health, reset): # returns next state, reward, done
 		no_action = None
 		done = False
 
 		if reset == True:
-			self.reward = 0
+			self.reward = 0 # cumulative rewards in an episode
 
 		# calculate damage point
-		score = getScore(action)
-		
+		print("??????", self.action_space)
+		print('max_combo_score ', self.max_combo_score)
+		score = getScore(self.action_space[action], self.matrix)
+		# print('type of action: ', type(action))
+		# print('matrix: ', self.matrix)
+
 		# calculate rewards
-		self.agent_health -= score
+		self.agent_health -= player_score
+		self.player_health -= score
 		if self.agent_health <= 0:
 			self.agent_health = 0
+			self.agent_wins -= 1
+			self.player_wins += 1
 			done = True
 
-		if self.player_score <= 0:
-			self.player_health = 0
+		if self.player_health <= 0:
+			self.player_wins -= 1
+			self.agent_wins += 1
 			done = True
 
-		next_state = [self.agent_health, self.player_health]
-		return next_state, reward, done
+		# print(self.player_health)
+		# print(self.agent_health, '\n')
+
+		next_state = [self.agent_health, self.player_health, self.agent_wins, self.player_wins]
+		return next_state, self.reward, done
 
 	def reset(self, episode): # returns new initial raw file and state 
 		self.reward = 0
-		self.episode = episode
-
-		return self.state # episode = init state vec idx
+		self.episode = episode	
+		self.fate = None # win: 1 loss: 0
+		self.agent_health, self.player_health = self.max_health, self.max_health
+		self.max_combo_score = None
+		self.state = [self.agent_health, self.player_health, self.agent_wins, self.player_wins]
+		
+		return self.state
 
 
 
