@@ -20,6 +20,7 @@ from getMatrix import getMatrix
 from takeAction import generate_random
 from random import randint
 from createActionSpace import createActionSpace
+from codeToLetter import codeToLetter
 
 
 class DQNAgent:
@@ -113,7 +114,7 @@ if __name__ == "__main__":
 			env.aciton_space = createActionSpace(agent.state_size)
 		else:
 			env.aciton_space = aciton_space
-		print('as: ', env.aciton_space)
+		# print('as: ', env.aciton_space)
 		reset = True
 		state = agent.env.reset(e) # state is [self.agent_health, self.player_health, self.agent_wins, self.player_wins]
 		state = np.reshape(state, [1, agent.state_size]) # reshapes state dim
@@ -127,12 +128,17 @@ if __name__ == "__main__":
 
 			action = agent._act(env.state)
 
+			# write curr action to file
+			act_out = codeToLetter(env.aciton_space[action])
+
+			with open('action_output.txt', 'w') as f:
+			    writer = csv.writer(f)
+			    writer.writerow(act_out)
 
 			"""
 			to be implemented: get player health
 			"""
 			player_score = random.randint(1,2)
-			print('before step ', agent.env.aciton_space)
 
 			next_state, reward, done = agent.env.step(action, player_score, player_health, reset) 
 			reset = False

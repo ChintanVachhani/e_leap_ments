@@ -46,11 +46,10 @@ class env():
 			self.reward = 0 # cumulative rewards in an episode
 
 		# calculate damage point
-		print("??????", self.action_space)
-		print('max_combo_score ', self.max_combo_score)
+		# print('max_combo_score ', self.max_combo_score)
 		score = getScore(self.action_space[action], self.matrix)
 		# print('type of action: ', type(action))
-		# print('matrix: ', self.matrix)
+		print('matrix: ', self.matrix)
 
 		# calculate rewards
 		self.agent_health -= player_score
@@ -66,8 +65,8 @@ class env():
 			self.agent_wins += 1
 			done = True
 
-		# print(self.player_health)
-		# print(self.agent_health, '\n')
+		print(self.player_health)
+		print(self.agent_health, '\n')
 
 		next_state = [self.agent_health, self.player_health, self.agent_wins, self.player_wins]
 		return next_state, self.reward, done
