@@ -44,7 +44,6 @@ def ai_api():
     #calculare the score corresponding to this action
     score = calculate_score(action, random_score_matrix)
 
-
     response = {
          'score': score
     }

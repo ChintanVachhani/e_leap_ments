@@ -32,16 +32,16 @@ def calculate_score(input_string,random_score_matrix):
 		i1=string_to_index[input_string[1]]
 		answer= random_score_matrix[i0,j0] + random_score_matrix[i1, i1]*.5
 	elif len(input_string)==4:
-	 	i0=string_to_index[input_string[0]]
-	 	j0=string_to_index[input_string[1]]
+		i0=string_to_index[input_string[0]]
+		j0=string_to_index[input_string[1]]
 
-	 	i1=string_to_index[input_string[1]]
-	 	j1=string_to_index[input_string[2]]
+		i1=string_to_index[input_string[1]]
+		j1=string_to_index[input_string[2]]
 
-	 	i2=string_to_index[input_string[2]]
-	 	j2=string_to_index[input_string[3]]
+		i2=string_to_index[input_string[2]]
+		j2=string_to_index[input_string[3]]
 
-	 	answer= random_score_matrix[i0,j0] + random_score_matrix[i1, j1] +random_score_matrix[i2, j2]
+		answer= random_score_matrix[i0,j0] + random_score_matrix[i1, j1] +random_score_matrix[i2, j2]
 
 
 
