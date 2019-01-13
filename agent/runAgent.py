@@ -1,5 +1,5 @@
-from getMaxComboScore import getMaxComboScore
-from getScore import getScore
+from agent.getMaxComboScore import getMaxComboScore
+from agent.getScore import getScore
 
 
 """
