@@ -33,6 +33,11 @@ def test():
 
 @app.route('/play/ai', methods=['POST'])
 def ai_api():
+    data = request.get_json() or {}  # recieve input from the user
+    playerHealth = data['playerHealth']
+    aiHealth = data['aiHealth']
+
+    print(playerHealth, aiHealth)
     # run the AI
     # os.system('python runDQN.py')
     # open the textfile saved by the AI
