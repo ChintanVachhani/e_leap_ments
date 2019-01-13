@@ -102,7 +102,7 @@ class DQNAgent:
 
 
 if __name__ == "__main__":
-    max_health = 10  # initial health
+    max_health = 100  # initial health
     EPISODES = 20  # number of times we change matrix
     state_size = 4
 
@@ -121,7 +121,7 @@ if __name__ == "__main__":
     else:
         open('./../saved_model', 'w').close()
 
-    open('./../actions.txt', 'w').close()
+    # open('./../actions.txt', 'w').close()
 
     for e in range(EPISODES):
         if e > 0:
@@ -140,7 +140,7 @@ if __name__ == "__main__":
         reward_f = 0
         player_health = 100
         for time_t in range(200):
-
+            open('./../actions.txt', 'w').close()
             action = agent._act(env.state)
 
             # write curr action to file
@@ -162,12 +162,13 @@ if __name__ == "__main__":
                         print("<---player action detected, prompting AI to take action now--->")
                         break
 
-            open('./../actions.txt', 'w').close()
+            # open('./../actions.txt', 'w').close()
 
             player_action = str()
             # retrieves player's action and convert action string to score
             with open('./../actions.txt', 'r') as r:
                 temp = r.read().splitlines()
+                print(temp)
                 for line in temp:
                     player_action += line
                     break

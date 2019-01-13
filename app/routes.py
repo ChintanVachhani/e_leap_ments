@@ -66,12 +66,10 @@ def user_api():
     # get damage/ score
     # health_ai and health_player
 
-    f = open(os.path.join(os.pardir, "actions.txt"), "w")
-    f.write(data["action"])
+    with open('actions.txt', 'w') as f:
+        f.write(data["action"])
     #    f.write(",")
     #    f.write(data["action_ai"])
-    f.write("\n")
-    f.close()
 
     score = calculate_score(data["action"], random_score_matrix)
 
