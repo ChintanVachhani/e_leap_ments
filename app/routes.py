@@ -39,16 +39,17 @@ def ai_api():
     f=open("action_output.txt", "r")
     #save it as a variable
     action =f.read()
+    #take commas out
+    action=action.replace(',','')
     #calculare the score corresponding to this action
     score = calculate_score(action, random_score_matrix)
-    #take commas out
-    score=score.replace(',','')
+
 
     response = {
          'score': score
     }
     #
-    # return util.success_response(200, 'Opponent has made a move', response)
+    return util.success_response(200, 'Opponent has made a move', response)
     #return util.error_response(400, 'Opponent has failed to make a move')
 
 
