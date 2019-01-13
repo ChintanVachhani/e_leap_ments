@@ -40,7 +40,8 @@ def ai_api():
     # save it as a variable
     action = f.read()
     # take commas out
-    action = action.replace(',', '')
+    action = action.replace(',', '').strip()
+
     # calculare the score corresponding to this action
     score = calculate_score(action, random_score_matrix)
 
