@@ -13,6 +13,8 @@ import random
 import math
 import time
 import csv
+import sys
+import os
 
 from runAgent import env
 from getMaxComboScore import getMaxComboScore
@@ -21,6 +23,9 @@ from takeAction import generate_random
 from random import randint
 from createActionSpace import createActionSpace
 from codeToLetter import codeToLetter
+
+sys.path.append("../")
+from calculate_score import calculate_score
 
 
 class DQNAgent:
@@ -95,6 +100,7 @@ class DQNAgent:
 		# self.model.save_weights(name)
 		self.model.save(name)
 
+
 if __name__ == "__main__":
 	max_health = 10 # initial health
 	EPISODES = 20 # number of times we change matrix
@@ -106,15 +112,23 @@ if __name__ == "__main__":
 	agent.state_size = state_size
 	done = False
 
-	episode_lengths = []
-	episode_rewards = []
+	# load saved file if written. creates new file if does not exist
+	saved_model_path = Path('saved_model')
+	if saved_model_path.is_file():
+		if not (os.stat(saved_model_path).st_size == 0):
+			print("<---saved model detected, loading saved model--->")
+			agent.load('saved_model')
+	else:
+		open('saved_model', 'w').close()
+
+	open('actions.txt', 'w').close()
 
 	for e in range(EPISODES):
 		if e > 0:
 			env.aciton_space = createActionSpace(agent.state_size)
 		else:
 			env.aciton_space = aciton_space
-		# print('as: ', env.aciton_space)
+		
 		reset = True
 		state = agent.env.reset(e) # state is [self.agent_health, self.player_health, self.agent_wins, self.player_wins]
 		state = np.reshape(state, [1, agent.state_size]) # reshapes state dim
@@ -124,7 +138,7 @@ if __name__ == "__main__":
 		t_start = time.time()
 		reward_f = 0
 		player_health = 100
-		for time_t in range(20):
+		for time_t in range(200):
 
 			action = agent._act(env.state)
 
@@ -136,9 +150,30 @@ if __name__ == "__main__":
 			    writer.writerow(act_out)
 
 			"""
-			to be implemented: get player health
+			to be implemented: get player action
+			store player action in a global file actions.txt
 			"""
-			player_score = random.randint(1,2)
+			player_action_file = Path('actions.txt')
+			print('exists??? ', player_action_file.is_file())
+			while True: # code puts on a halt while waiting for the user to perform an action
+				if player_action_file.is_file():
+					if not (os.stat(player_action_file).st_size == 0):
+						print("<---player action detected, prompting AI to take action now--->")
+						break			
+
+			open('actions.txt', 'w').close()
+
+			# retrieves player's action and convert action string to score
+			with open('actions.txt', 'r') as r:
+				temp = r.read().splitlines()
+				for line in temp:
+					player_action += line
+					break
+				print('player_action: ', player_action)
+		
+			# print('player_action is ', player_action)
+			player_score = 0
+			player_score = calculate_score(player_action, env.matrix)
 
 			next_state, reward, done = agent.env.step(action, player_score, player_health, reset) 
 			reset = False
@@ -152,16 +187,19 @@ if __name__ == "__main__":
 			state = next_state
 			env.state = state # keep env updated 
 
+			if (time_t % 10) == 0: # save model every 10 epochs
+				open('saved_model', 'a').close()
+				agent.save('saved_model')
+
 			if done:
 				print("episode: {}/{}, trials in this ep: {}, agent wins: {}"
 					  .format(e+1, EPISODES, time_t+1, env.agent_wins+1))
 				break
+			if len(agent.memory) > agent.batch_size:
+				print('<---memory size reaches batch_size, time to _replay--->')
+				agent._replay()
 		t_end = time.time()
 		length = t_end - t_start
 
-		# if time_t > 4:
-		# 	print("Failed to complete in trial {}".format(time_t))
-		if e > 5:
-			agent._replay()
 
 

@@ -47,15 +47,15 @@ class env():
 
 		# calculate damage point
 		# print('max_combo_score ', self.max_combo_score)
-		score = getScore(self.action_space[action], self.matrix)
+		agent_score = getScore(self.action_space[action], self.matrix)
+		print('agent_score: ', agent_score)
 		# print('type of action: ', type(action))
 		print('matrix: ', self.matrix)
 
 		# calculate rewards
 		self.agent_health -= player_score
-		self.player_health -= score
+		self.player_health -= agent_score
 		if self.agent_health <= 0:
-			self.agent_health = 0
 			self.agent_wins -= 1
 			self.player_wins += 1
 			done = True
