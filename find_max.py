@@ -23,17 +23,21 @@ def find_max(val_array):
 			max_value = cur_value
 	return (max_value)
 
-def find_path_helper(val_array, str):
-	if (str.size = int(sqrt(val_array.size))):
-		real_max = find_max(val_array)
+#uses recursive DFS to find optimal combinations
+def find_path_helper(val_array, str, o_sol):
+	if (len(str) == int(sqrt(val_array.size))):
 		cur_max = calculate_score(str, val_array)
-		if (real_max == cur_max):
-			return str
-	find_path_helper(val_array, str+"A")
-	find_path_helper(val_array, str+"B")
-	find_path_helper(val_array, str+"C")
-	find_path_helper(val_array, str+"D")
+		u_max = calculate_score(o_sol[0], val_array)
+		if (u_max < cur_max):
+			o_sol[0] = str
+	else:
+		find_path_helper(val_array, str+"A", o_sol)
+		find_path_helper(val_array, str+"B", o_sol)
+		find_path_helper(val_array, str+"C", o_sol)
+		find_path_helper(val_array, str+"D", o_sol)
 
 def find_path(val_array):
 	str = ""
-	return find_path_helper(val_array, str)
+	o_sol = ["AAAA"]
+	find_path_helper(val_array, str, o_sol)
+	return o_sol
