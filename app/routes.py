@@ -12,10 +12,12 @@ import base64
 import json
 import os
 import sys
+import pickle
 from calculate_score import calculate_score
 from generate_random_table import *
 
 random_score_matrix = generate_random_table()
+pickle.dump(random_score_matrix, open("game_board.p", "wb"))
 
 
 @app.route('/')
@@ -71,6 +73,7 @@ def user_api():
     #    f.write(",")
     #    f.write(data["action_ai"])
 
+    random_score_matrix = pickle.load(open("game_board.p", "rb"))
     score = calculate_score(data["action"], random_score_matrix)
 
     response = {

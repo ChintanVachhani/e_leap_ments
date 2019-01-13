@@ -15,6 +15,7 @@ import time
 import csv
 import sys
 import os
+import pickle
 
 from agent.runAgent import *
 from agent.getMaxComboScore import getMaxComboScore
@@ -134,7 +135,13 @@ if __name__ == "__main__":
             e)  # state is [self.agent_health, self.player_health, self.agent_wins, self.player_wins]
         state = np.reshape(state, [1, agent.state_size])  # reshapes state dim
         env.state = state
-        env.matrix = getMatrix()
+
+        if e == 0:
+            env.matrix = pickle.load(open("./../game_board.p", "rb"))
+        else:
+            env.matrix = getMatrix()
+            pickle.dump(env.matrix, open("./../game_board.p", "wb"))
+
         env.max_combo_score = getMaxComboScore(agent.env.matrix)  # get max score of new matrix board
         t_start = time.time()
         reward_f = 0
