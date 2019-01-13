@@ -36,18 +36,20 @@ def ai_api():
     #run the AI
     os.system(‘python runDQN.py’)
     #open the textfile saved by the AI
-    f=open("ai_output", "r")
+    f=open("action_output.txt", "r")
     #save it as a variable
     action =f.read()
     #calculare the score corresponding to this action
     score = calculate_score(action, random_score_matrix)
+    #take commas out
+    score=score.replace(',','')
 
     response = {
          'score': score
     }
     #
     # return util.success_response(200, 'Opponent has made a move', response)
-    return util.error_response(400, 'Opponent has failed to make a move')
+    #return util.error_response(400, 'Opponent has failed to make a move')
 
 
 @app.route('/play/user', methods=['POST'])
