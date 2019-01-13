@@ -34,7 +34,7 @@ def test():
 @app.route('/play/ai', methods=['POST'])
 def ai_api():
     # run the AI
-    os.system('python runDQN.py')
+    # os.system('python runDQN.py')
     # open the textfile saved by the AI
     f = open("action_output.txt", "r")
     # save it as a variable
@@ -58,16 +58,14 @@ def user_api():
     # recieve the pattern
     data = request.get_json() or {}  # recieve input from the user
     # get damage/ score
-    #health_ai and health_player
-    
-    f= open(os.path.join(os.pardir, "actions.txt"), "w")
-    f.write(data["playerAction"])
-#    f.write(",")
-#    f.write(data["action_ai"])
+    # health_ai and health_player
+
+    f = open(os.path.join(os.pardir, "actions.txt"), "w")
+    f.write(data["action"])
+    #    f.write(",")
+    #    f.write(data["action_ai"])
     f.write("\n")
     f.close()
-
-
 
     score = calculate_score(data["action"], random_score_matrix)
 

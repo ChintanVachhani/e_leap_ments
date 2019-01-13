@@ -9,6 +9,8 @@ import numpy as np
 
 
 def calculate_score(input_string, random_score_matrix):
+    answer = 0
+
     string_to_index = {
         "A": 0,
         "B": 1,
