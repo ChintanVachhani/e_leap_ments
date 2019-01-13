@@ -4,7 +4,7 @@
 
 #output: a score
 
-#from e_leap_ments import * #to access the random_score_matrix from generate_random_table.py
+from e_leap_ments import * #to access the random_score_matrix from generate_random_table.py
 import numpy as np 
 
 
