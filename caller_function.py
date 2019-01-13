@@ -7,7 +7,7 @@ def call_user(number_):
 	auth_token = '8944858c7672456fe0d84e8e4b88510e'
 	client = Client(account_sid, auth_token)
 	call = client.calls.create(
-    	                    #url='call.xml',
+    	                    url='https://handler.twilio.com/twiml/EH84fad8b47e171a43e9921274a32a8ce5',
         	                to=number_,
             	            from_='+19386665757'
 	                    )
