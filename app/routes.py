@@ -1,7 +1,7 @@
 # describes the process of the AI predicting a combination and outputs the score corresponding to that combo
 
-from app import application as app,util
-#from app import application as util
+from app import application as app, util
+# from app import application as util
 from flask import render_template, request
 # what it was
 # from codebreaker_cv import *
@@ -33,23 +33,24 @@ def test():
 
 @app.route('/play/ai', methods=['POST'])
 def ai_api():
-    #run the AI
-    os.system(‘python runDQN.py’)
-    #open the textfile saved by the AI
-    f=open("action_output.txt", "r")
-    #save it as a variable
-    action =f.read()
-    #take commas out
-    action=action.replace(',','')
-    #calculare the score corresponding to this action
+    # run the AI
+    os.system('python runDQN.py')
+    # open the textfile saved by the AI
+    f = open("action_output.txt", "r")
+    # save it as a variable
+    action = f.read()
+    # take commas out
+    action = action.replace(',', '')
+    # calculare the score corresponding to this action
     score = calculate_score(action, random_score_matrix)
 
     response = {
-         'score': score
+        'action': action,
+        'score': score
     }
     #
     return util.success_response(200, 'Opponent has made a move', response)
-    #return util.error_response(400, 'Opponent has failed to make a move')
+    # return util.error_response(400, 'Opponent has failed to make a move')
 
 
 @app.route('/play/user', methods=['POST'])
@@ -63,12 +64,9 @@ def user_api():
         'score': score
     }
     return util.success_response(200, 'You have made a move', response)
+
+
 # return util.error_response(400, 'You have failed to make a move')
 
 if __name__ == '__main__':
     app.run()
-
-
-
-
-
