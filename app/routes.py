@@ -48,7 +48,7 @@ def ai_api():
         'action': action,
         'score': score
     }
-    #
+    f.close()
     return util.success_response(200, 'Opponent has made a move', response)
     # return util.error_response(400, 'Opponent has failed to make a move')
 
@@ -58,6 +58,14 @@ def user_api():
     # recieve the pattern
     data = request.get_json() or {}  # recieve input from the user
     # get damage/ score
+    #health_ai and health_player
+    
+    f= open(os.path.join(os.pardir, "healths.txt"), "w")
+    f.write(data["health_player]"])
+    f.write(",")
+    f.write(data["health_ai"])
+    f.write("\n")
+    f.close()
     score = calculate_score(data["action"], random_score_matrix)
 
     response = {
