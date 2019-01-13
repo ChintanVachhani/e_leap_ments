@@ -5,7 +5,6 @@ from flask import render_template, request
 # from codebreaker_cv import *
 # what it will probably be
 from agent import *
-import cv2
 import numpy as np
 import base64
 import json
