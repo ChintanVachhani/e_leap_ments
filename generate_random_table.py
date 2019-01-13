@@ -13,7 +13,6 @@ def generate_random_table():
 				a[i,j]*=-1.00
 			if a[i,j] >.5 and a[i,j] <1.0:
 				a[i,j]= 1.00
-	print(a)
 	return a
 
 generate_random_table()
