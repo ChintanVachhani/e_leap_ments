@@ -1,5 +1,7 @@
 # describes the process of the AI predicting a combination and outputs the score corresponding to that combo
-from app import application as app, util
+
+from app import application as app,util
+#from app import application as util
 from flask import render_template, request
 # what it was
 # from codebreaker_cv import *
@@ -8,7 +10,8 @@ from agent import *
 import numpy as np
 import base64
 import json
-
+import os
+import sys
 from calculate_score import calculate_score
 from generate_random_table import *
 
@@ -30,17 +33,18 @@ def test():
 
 @app.route('/play/ai', methods=['POST'])
 def ai_api():
-    data = {}
-    # to get the combination to play [a string] and the score [an int? a double?]
+    #run the AI
+    os.system(‘python runDQN.py’)
+    #open the textfile saved by the AI
+    f=open("ai_output", "r")
+    #save it as a variable
+    action =f.read()
+    #calculare the score corresponding to this action
+    score = calculate_score(action, random_score_matrix)
 
-    # if ai_move == call_algorithm():  # returns a string of the AI's guessa
-    #     data = ai_move()
-    #     score = calculate_score(data["action"],
-    #                             random_score_matrix)  # returns a score that is calculated from that combination
-    #
-    # response = {
-    #     'action': action
-    # }
+    response = {
+         'score': score
+    }
     #
     # return util.success_response(200, 'Opponent has made a move', response)
     return util.error_response(400, 'Opponent has failed to make a move')
@@ -49,9 +53,7 @@ def ai_api():
 @app.route('/play/user', methods=['POST'])
 def user_api():
     # recieve the pattern
-
     data = request.get_json() or {}  # recieve input from the user
-
     # get damage/ score
     score = calculate_score(data["action"], random_score_matrix)
 
@@ -60,3 +62,11 @@ def user_api():
     }
     return util.success_response(200, 'You have made a move', response)
 # return util.error_response(400, 'You have failed to make a move')
+
+if __name__ == '__main__':
+    app.run()
+
+
+
+
+
