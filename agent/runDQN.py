@@ -97,23 +97,29 @@ class DQNAgent:
 if __name__ == "__main__":
 	max_health = 10 # initial health
 	EPISODES = 20 # number of times we change matrix
+	state_size = 4
 
-	env = env(max_health, None, None, None) # create an instance of the e-leap-ments AI
+	aciton_space = createActionSpace(state_size)
+	env = env(max_health, None, None, aciton_space) # create an instance of the e-leap-ments AI
 	agent = DQNAgent(env)
+	agent.state_size = state_size
 	done = False
 
 	episode_lengths = []
 	episode_rewards = []
 
 	for e in range(EPISODES):
-		env.aciton_space = createActionSpace(agent.state_size)
+		if e > 0:
+			env.aciton_space = createActionSpace(agent.state_size)
+		else:
+			env.aciton_space = aciton_space
 		print('as: ', env.aciton_space)
 		reset = True
-		state = env.reset(e) # state is [self.agent_health, self.player_health, self.agent_wins, self.player_wins]
+		state = agent.env.reset(e) # state is [self.agent_health, self.player_health, self.agent_wins, self.player_wins]
 		state = np.reshape(state, [1, agent.state_size]) # reshapes state dim
 		env.state = state
 		env.matrix = getMatrix()
-		env.max_combo_score = getMaxComboScore(env.matrix) # get max score of new matrix board
+		env.max_combo_score = getMaxComboScore(agent.env.matrix) # get max score of new matrix board
 		t_start = time.time()
 		reward_f = 0
 		player_health = 100
@@ -126,9 +132,9 @@ if __name__ == "__main__":
 			to be implemented: get player health
 			"""
 			player_score = random.randint(1,2)
-			print('before step ', env.aciton_space)
+			print('before step ', agent.env.aciton_space)
 
-			next_state, reward, done = env.step(action, player_score, player_health, reset) 
+			next_state, reward, done = agent.env.step(action, player_score, player_health, reset) 
 			reset = False
 
 			reward_f += reward
